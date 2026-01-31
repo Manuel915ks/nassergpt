@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NasserGPT</title>
+  <style>
+    :root {
+      --bg: #0f0f0f;
+      --panel: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #e5e5e5;
+      --muted: #9ca3af;
+      --accent: #10a37f;
+    }* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+}
+
+/* Hintergrund-Text */
+.background-text {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: rgba(255, 255, 255, 0.04);
+  z-index: 0;
+  user-select: none;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background: #111;
+  border-right: 1px solid var(--border);
+  padding: 16px;
+  z-index: 1;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.new-chat {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px;
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Chatbereich */
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+.chat-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  font-weight: 500;
+}
+
+.messages {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.message {
+  max-width: 720px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.user {
+  margin-left: auto;
+  background: #2a2a2a;
+  padding: 14px 16px;
+  border-radius: 12px;
+}
+
+.bot {
+  margin-right: auto;
+  background: #1f2933;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+/* Input */
+.input-area {
+  border-top: 1px solid var(--border);
+  padding: 16px;
+  background: var(--panel);
+}
+
+.input-box {
+  display: flex;
+  gap: 10px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+textarea {
+  flex: 1;
+  resize: none;
+  height: 48px;
+  background: #111;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 12px 14px;
+  font-size: 15px;
+}
+
+button.send {
+  background: var(--accent);
+  border: none;
+  border-radius: 10px;
+  padding: 0 18px;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.hint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="background-text">به ناسر چی پی تی خوش آمدید</div>  <div class="sidebar">
+    <div class="logo">NasserGPT</div>
+    <button class="new-chat" onclick="resetChat()">+ Neuer Chat</button>
+  </div>  <div class="chat-container">
+    <div class="chat-header">NasserGPT</div>
+    <div class="messages" id="messages">
+      <div class="message bot">Hallo 👋<br />Ich bin <b>NasserGPT</b>. Wie kann ich dir helfen?</div>
+    </div>
+    <div class="input-area">
+      <div class="input-box">
+        <textarea id="input" placeholder="Nachricht an NasserGPT..."></textarea>
+        <button class="send" onclick="sendMessage()">Senden</button>
+      </div>
+      <div class="hint">Dies ist eine Demo-Webseite (ohne echte KI-Anbindung)</div>
+    </div>
+  </div>  <script>
+    const messages = document.getElementById('messages');
+    const input = document.getElementById('input');
+
+    function generateReply(userText) {
+      const t = userText.toLowerCase();
+      if (t.includes('hallo') || t.includes('hi')) return 'Hallo 👋 Wie kann ich dir helfen?';
+      if (t.includes('wer bist')) return 'Ich bin NasserGPT – ein KI‑ähnlicher Chat (Demo).';
+      if (t.includes('hilfe')) return 'Sag mir einfach, wobei du Hilfe brauchst.';
+      return 'Interessant. Erzähl mir mehr darüber.';
+    }
+
+    function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = text;
+      messages.appendChild(userMsg);
+
+      input.value = '';
+      messages.scrollTop = messages.scrollHeight;
+
+      const typing = document.createElement('div');
+      typing.className = 'message bot';
+      typing.textContent = 'NasserGPT schreibt…';
+      messages.appendChild(typing);
+      messages.scrollTop = messages.scrollHeight;
+
+      setTimeout(() => {
+        typing.remove();
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot';
+        botMsg.textContent = generateReply(text);
+        messages.appendChild(botMsg);
+        messages.scrollTop = messages.scrollHeight;
+      }, 800);
+    }
+
+    function resetChat() {
+      messages.innerHTML = '<div class="message bot">Neuer Chat gestartet. Wie kann ich helfen?</div>';
+    }
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  </script></body>
+</html>
