@@ -5,76 +5,92 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NasserGPT</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: #f6f6f6;
-  }
-  header {
-    background-color: #007bff;
-    color: white;
-    padding: 15px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: bold;
-  }
-  #messages {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-  .message {
-    padding: 10px 15px;
-    margin: 5px 0;
-    border-radius: 10px;
-    max-width: 80%;
-    word-wrap: break-word;
-  }
-  .user {
-    background: #007bff;
-    color: white;
-    align-self: flex-end;
-  }
-  .bot {
-    background: #e5e5e5;
-    color: black;
-    align-self: flex-start;
-  }
-  #inputArea {
-    display: flex;
-    padding: 10px;
-    background: white;
-    border-top: 1px solid #ccc;
-  }
-  #input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-  }
-  button {
-    padding: 10px 20px;
-    margin-left: 10px;
-    border: none;
-    border-radius: 5px;
-    background: #007bff;
-    color: white;
-    font-size: 16px;
-  }
-  body::before {
-    content: 'به ناسر چی پی تی خوش امدید.';
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    color: #ccc;
-  }
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #121212;
+  color: #ffffff;
+}
+header {
+  background-color: #1f1f1f;
+  color: #00bfff;
+  padding: 20px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+#messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.message {
+  padding: 12px 18px;
+  margin: 8px 0;
+  border-radius: 12px;
+  max-width: 80%;
+  word-wrap: break-word;
+  font-size: 16px;
+}
+.user {
+  background-color: #00bfff;
+  color: #fff;
+  align-self: flex-end;
+  box-shadow: 0 2px 5px rgba(0,191,255,0.4);
+}
+.bot {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  align-self: flex-start;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+#inputArea {
+  display: flex;
+  padding: 12px;
+  background-color: #1f1f1f;
+  border-top: 1px solid #333;
+}
+#input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  font-size: 16px;
+  background-color: #2c2c2c;
+  color: #fff;
+}
+#input::placeholder {
+  color: #aaa;
+}
+button {
+  padding: 12px 24px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #00bfff;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover {
+  background-color: #009fdf;
+}
+body::before {
+  content: 'به ناسر چی پی تی خوش آمدید.';
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  color: #555;
+}
 </style>
 </head>
 <body>
@@ -82,36 +98,40 @@
 <header>NasserGPT</header>
 
 <div id="messages">
-  <div class="message bot">سلام! من NasserGPT هستم. هر سوالی داری میتونی از من بپرسی!</div>
+  <div class="message bot">Hallo! Ich bin NasserGPT. Du kannst mir jede Frage stellen.</div>
 </div>
 
 <div id="inputArea">
-  <input type="text" id="input" placeholder="پیام خود را بنویسید...">
-  <button onclick="sendMessage()">ارسال</button>
+  <input type="text" id="input" placeholder="Schreibe hier...">
+  <button onclick="sendMessage()">Senden</button>
 </div>
 
 <script>
 const messages = document.getElementById('messages');
 const input = document.getElementById('input');
 
+// --- KI-Antworten ---
 function generateReply(text){
-  const t = text.toLowerCase();
+  const t = text.trim();
+  const isPersian = /[\u0600-\u06FF]/.test(t);
 
-  // Beispiele für Antworten auf Deutsch
-  if(t.includes('hallo') || t.includes('hi')) return 'سلام! خوش آمدی 👋';
-  if(t.includes('wie geht')) return 'من خوبم، مرسی! تو چطوری؟';
-  if(t.includes('wer bist')) return 'من NasserGPT هستم، یک چت هوش مصنوعی ساده برای گفتگو!';
-  if(t.includes('hilfe') || t.includes('مشکل')) return 'می‌توانم به شما کمک کنم. سوالت را بپرس.';
-  
-  // Wenn Text auf Persisch ist
-  if(t.match(/[\u0600-\u06FF]/)) {
-    return 'من پاسخ شما را به فارسی می‌دهم: ' + text;
+  if(isPersian){
+    // Wenn Text auf Persisch ist
+    if(t.includes('سلام') || t.includes('hi')) return 'سلام! خوش آمدی 👋';
+    if(t.includes('چطوری')) return 'من خوبم، مرسی! تو چطوری؟';
+    return 'من پاسخ شما را به فارسی می‌دهم: ' + t;
+  } else {
+    // Deutsch-Antworten
+    const low = t.toLowerCase();
+    if(low.includes('hallo') || low.includes('hi')) return 'Hallo! Schön, dich zu sehen 👋';
+    if(low.includes('wie geht')) return 'Mir geht es gut, danke! Und dir?';
+    if(low.includes('wer bist')) return 'Ich bin NasserGPT, dein Chatbot-Assistent!';
+    if(low.includes('hilfe') || low.includes('problem')) return 'Ich kann dir helfen. Stell mir einfach deine Frage.';
+    return 'Interessant! Kannst du das noch etwas genauer erklären?';
   }
-
-  // Standardantwort
-  return 'من نمی‌دانم، لطفاً سوال دیگری بپرسید.';
 }
 
+// --- Nachricht senden ---
 function sendMessage(){
   const text = input.value.trim();
   if(!text) return;
@@ -127,7 +147,7 @@ function sendMessage(){
   // Bot tippt...
   const typing = document.createElement('div');
   typing.className='message bot';
-  typing.textContent='NasserGPT در حال پاسخگویی...';
+  typing.textContent='NasserGPT schreibt...';
   messages.appendChild(typing);
   messages.scrollTop = messages.scrollHeight;
 
